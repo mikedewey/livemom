@@ -132,45 +132,120 @@
       }
     }
   </style>
-  <script type="text/javascript">
-    const API_KEY = 'AIzaSyDmtpvyAZ3kUN1A_YALOOr8W_EKuHolGIY'; // Replace with your Google API Key
-    const SPREADSHEET_ID = '1RMMWGFEaNnzJkIXJR3-DQHUBSa57KklvwD3LuT9mNjs'; // Your Spreadsheet ID
-    const RANGE = 'General Quotes!A2:B67'; // Specify the exact range of authors and quotes in the "General Quotes" tab
+ <script type="text/javascript">
+  const API_KEY = 'AIzaSyDmtpvyAZ3kUN1A_YALOOr8W_EKuHolGIY'; // Replace with your Google API Key
+  const SPREADSHEET_ID = '1RMMWGFEaNnzJkIXJR3-DQHUBSa57KklvwD3LuT9mNjs'; // Your Spreadsheet ID for quotes
+  const RANGE = 'General Quotes!A2:B67'; // Specify the exact range of authors and quotes in the "General Quotes" tab
 
-    async function fetchQuotes() {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+  const REVENUE_SHEET_ID = '1Kw5d_nT297DxtkElmgH9txxMbitnCdgoTIHhTnhg08k'; // The new spreadsheet ID for "Updated 2024 Targets"
+  const REVENUE_RANGE = 'Updated 2024 Targets!O14'; // The range for 2024 Revenue
 
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
+  // Fetch Quotes Function with Debugging
+  async function fetchQuotes() {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+    console.log(`Fetching quotes from: ${url}`); // Debug URL
 
-        if (data && data.values) {
-          const quotes = data.values; // Array of [Author, Quote]
-          displayRandomQuote(quotes);
-        } else {
-          document.getElementById('quote').innerHTML = `<p>Error loading quotes.</p>`;
-        }
-      } catch (error) {
-        console.error('Error fetching quotes:', error);
+    try {
+      const response = await fetch(url);
+      console.log('Quotes response status:', response.status); // Debug response status
+
+      const data = await response.json();
+      console.log('Quotes data:', data); // Debug response data
+
+      if (data && data.values) {
+        const quotes = data.values; // Array of [Author, Quote]
+        displayRandomQuote(quotes);
+      } else {
+        console.error('No quotes found in response:', data);
         document.getElementById('quote').innerHTML = `<p>Error loading quotes.</p>`;
       }
+    } catch (error) {
+      console.error('Error fetching quotes:', error);
+      document.getElementById('quote').innerHTML = `<p>Error loading quotes.</p>`;
     }
+  }
 
-    function displayRandomQuote(quotes) {
-      // Randomly select a quote
-      const randomIndex = Math.floor(Math.random() * quotes.length);
-      const [author, quote] = quotes[randomIndex];
+  // Display Random Quote Function
+  function displayRandomQuote(quotes) {
+    console.log('Displaying random quote from:', quotes); // Debug available quotes
 
-      // Update the quote section
-      document.getElementById('quote').innerHTML = `
-        <p>${quote}</p>
-        <p class="author">- ${author}</p>
-      `;
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    const [author, quote] = quotes[randomIndex];
+
+    console.log(`Selected quote: "${quote}" by ${author}`); // Debug selected quote
+
+    document.getElementById('quote').innerHTML = `
+      <p>${quote}</p>
+      <p class="author">- ${author}</p>
+    `;
+  }
+
+  // Fetch Revenue Function with Debugging
+  async function fetchRevenue() {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${REVENUE_SHEET_ID}/values/${REVENUE_RANGE}?key=${API_KEY}`;
+    console.log(`Fetching revenue from: ${url}`); // Debug URL
+
+    try {
+      const response = await fetch(url);
+      console.log('Revenue response status:', response.status); // Debug response status
+
+      const data = await response.json();
+      console.log('Revenue data:', data); // Debug response data
+
+      if (data && data.values) {
+        const revenue = data.values[0][0]; // Extract the revenue value
+        displayRevenue(revenue);
+      } else {
+        console.error('No revenue found in response:', data);
+        document.querySelector('.stats .label:nth-of-type(2)').innerHTML = `Error loading revenue.`;
+      }
+    } catch (error) {
+      console.error('Error fetching revenue:', error);
+      document.querySelector('.stats .label:nth-of-type(2)').innerHTML = `Error loading revenue.`;
     }
+  }
 
-    // Fetch and display a random quote on page load
-    fetchQuotes();
-  </script>
+// Display Revenue Function
+function displayRevenue(revenue) {
+  console.log(`Raw revenue value fetched: ${revenue}`); // Debug raw revenue value
+
+  // Try to parse the revenue as a number
+  const parsedRevenue = parseFloat(revenue.replace(/[^0-9.-]+/g, '')); // Remove non-numeric characters
+  console.log(`Parsed revenue value: ${parsedRevenue}`); // Debug parsed revenue value
+
+  // Check if parsing was successful
+  if (!isNaN(parsedRevenue)) {
+    // Convert revenue to millions and format it with one decimal place
+    const revenueInMillions = (parsedRevenue / 1_000_000).toFixed(1); // Convert to millions
+    console.log(`Revenue in millions: ${revenueInMillions}m`); // Debug compact format
+
+    // Target the correct DOM elements
+    const revenueNumberElement = document.querySelector('.stats .number:nth-child(3)'); // Third child of .stats
+    const revenueLabelElement = document.querySelector('.stats .label:nth-child(4)');  // Fourth child of .stats
+
+    if (revenueNumberElement && revenueLabelElement) {
+      revenueNumberElement.innerHTML = `${revenueInMillions}m`; // Format revenue in millions and include arrow
+      revenueLabelElement.textContent = '2024 Revenue'; // Update label
+      console.log('Revenue updated in DOM successfully.'); // Debug success
+    } else {
+      console.error('Could not find DOM elements for revenue display.'); // Debug error
+      console.log('DOM structure issue. Verify .stats structure:', document.querySelector('.stats').innerHTML);
+    }
+  } else {
+    console.error('Failed to parse revenue value. Check the format of the value in the spreadsheet.');
+  }
+}
+
+  // Combined Fetch Function
+  async function fetchData() {
+    console.log('Fetching quotes and revenue...');
+    await Promise.all([fetchQuotes(), fetchRevenue()]);
+    console.log('Fetching complete.');
+  }
+
+  // Call the combined fetch function on page load
+  fetchData();
+</script>
 </head>
 <body>
   <!-- Logo -->
@@ -182,16 +257,16 @@
   <!-- Main Content -->
   <div class="content">
     <div class="quote" id="quote">
-      <p>"Loading quote..."</p>
-      <p class="author">- Author</p>
+      <p>...</p>
+      <p class="author">- ...</p>
     </div>
   </div>
   <div class="stats">
     <div class="number">53,423</div>
-    <div class="label">Sams Served</div>
+    <div class="label">Sams Impacted</div>
     <div class="number">
-      25% <div class="arrow">↑</div>
+      ...
     </div>
-    <div class="label">Q4 Goal</div>
+    <div class="label">2024 Revenue</div>
   </div>
 </body>
