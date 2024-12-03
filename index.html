@@ -3,6 +3,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?familyDM+Sans:wght@100..900&display=swap');
+
     body {
       margin: 0;
       padding: 0;
@@ -14,9 +16,9 @@
       background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('bikebg.jpg');
       background-size: cover;
       background-position: center;
-      font-family: 'PP Neue Montreal', Arial, sans-serif;
+      font-family: 'Work Sans', Arial, sans-serif; /* Updated font */
       color: #fff;
-        cursor: default;
+      cursor: default;
     }
 
     .logo {
@@ -59,7 +61,7 @@
     .number {
       color: white;
       font-size: 150px;
-      font-family: 'PP Neue Montreal', sans-serif;
+      font-family: 'Work Sans', sans-serif; /* Updated font */
       font-weight: 100;
       word-wrap: break-word;
       display: flex;
@@ -72,7 +74,7 @@
     .number .arrow {
       color: #16D034;
       font-size: 30.18px;
-      font-family: 'Helvetica Now Text', sans-serif;
+      font-family: 'Work Sans', sans-serif; /* Updated font */
       font-weight: 700;
       margin-left: 10px;
     }   
@@ -80,7 +82,7 @@
     .label {
       color: white;
       font-size: 16px;
-      font-family: 'Helvetica Now Text';
+      font-family: 'Work Sans', sans-serif; /* Updated font */
       font-weight: 500;
       text-transform: uppercase;
       letter-spacing: 0.71px;
@@ -90,7 +92,7 @@
 
     .quote {
       font-size: 37px;
-      font-family: 'PP Neue Montreal';
+      font-family: 'Work Sans', sans-serif; /* Updated font */
       font-weight: 300;
       line-height: 55px;
       word-wrap: break-word;
@@ -99,13 +101,8 @@
       bottom: 120px;
       width: 570px;
       line-height: 120%;
-    /*
-      opacity: 0; 
-      transform: translateY(20px); 
-      animation: fadeSlideUpSnappy 1s ease-out forwards; 
-        */
     }
-      
+
     .quote p { 
       margin-bottom: 15px; 
     }  
@@ -113,7 +110,7 @@
     .quote .author {
       color: white;
       font-size: 22px;
-      font-family: 'PP Neue Montreal';
+      font-family: 'Work Sans', sans-serif; /* Updated font */
       font-weight: 500;
       line-height: 55px;
       word-wrap: break-word;
@@ -132,6 +129,7 @@
       }
     }
   </style>
+
  <script type="text/javascript">
   const API_KEY = 'AIzaSyDmtpvyAZ3kUN1A_YALOOr8W_EKuHolGIY'; // Replace with your Google API Key
   const SPREADSHEET_ID = '1RMMWGFEaNnzJkIXJR3-DQHUBSa57KklvwD3LuT9mNjs'; // Your Spreadsheet ID for quotes
@@ -214,7 +212,7 @@ function displayRevenue(revenue) {
   console.log(`Parsed 2024 revenue value: ${parsedRevenue2024}`); // Debug parsed 2024 revenue value
 
   // Define 2023 revenue as a fixed value (can be updated dynamically if needed)
-  const revenue2023 = 41369894; // 2023 revenue in raw format
+  const revenue2023 = 38729034; // 2023 revenue in raw format
 
   // Check if parsing was successful
   if (!isNaN(parsedRevenue2024) && !isNaN(revenue2023)) {
@@ -248,6 +246,10 @@ function displayRevenue(revenue) {
 
   // Call the combined fetch function on page load
   fetchData();
+       // Refresh the page every 10 minutes (600,000 milliseconds)
+  setInterval(function() {
+    location.reload();
+  }, 600000); // 10 minutes in milliseconds
 </script>
 </head>
 <body>
@@ -265,7 +267,7 @@ function displayRevenue(revenue) {
     </div>
   </div>
   <div class="stats">
-    <div class="number">70,423</div>
+    <div class="number">64,200</div>
     <div class="label">Sams Impacted</div>
     <div class="number">
       ...
