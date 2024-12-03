@@ -210,29 +210,32 @@ function displayRevenue(revenue) {
   console.log(`Raw revenue value fetched: ${revenue}`); // Debug raw revenue value
 
   // Try to parse the revenue as a number
-  const parsedRevenue = parseFloat(revenue.replace(/[^0-9.-]+/g, '')); // Remove non-numeric characters
-  console.log(`Parsed revenue value: ${parsedRevenue}`); // Debug parsed revenue value
+  const parsedRevenue2024 = parseFloat(revenue.replace(/[^0-9.-]+/g, '')); // Remove non-numeric characters
+  console.log(`Parsed 2024 revenue value: ${parsedRevenue2024}`); // Debug parsed 2024 revenue value
+
+  // Define 2023 revenue as a fixed value (can be updated dynamically if needed)
+  const revenue2023 = 41369894; // 2023 revenue in raw format
 
   // Check if parsing was successful
-  if (!isNaN(parsedRevenue)) {
-    // Convert revenue to millions and format it with one decimal place
-    const revenueInMillions = (parsedRevenue / 1_000_000).toFixed(1); // Convert to millions
-    console.log(`Revenue in millions: ${revenueInMillions}m`); // Debug compact format
+  if (!isNaN(parsedRevenue2024) && !isNaN(revenue2023)) {
+    // Calculate YOY Growth
+    const yoyGrowth = (((parsedRevenue2024 - revenue2023) / revenue2023) * 100).toFixed(1); // Growth in %
+    console.log(`Calculated YOY Growth: ${yoyGrowth}%`); // Debug YOY Growth value
 
     // Target the correct DOM elements
     const revenueNumberElement = document.querySelector('.stats .number:nth-child(3)'); // Third child of .stats
     const revenueLabelElement = document.querySelector('.stats .label:nth-child(4)');  // Fourth child of .stats
 
     if (revenueNumberElement && revenueLabelElement) {
-      revenueNumberElement.innerHTML = `${revenueInMillions}m`; // Format revenue in millions and include arrow
-      //revenueLabelElement.textContent = '2024 Revenue'; // Update label
-      console.log('Revenue updated in DOM successfully.'); // Debug success
+      revenueNumberElement.innerHTML = `${yoyGrowth}%`; // Display YOY Growth as a percentage
+      revenueLabelElement.textContent = '%YOY Growth'; // Update label
+      console.log('YOY Growth updated in DOM successfully.'); // Debug success
     } else {
-      console.error('Could not find DOM elements for revenue display.'); // Debug error
+      console.error('Could not find DOM elements for YOY Growth display.'); // Debug error
       console.log('DOM structure issue. Verify .stats structure:', document.querySelector('.stats').innerHTML);
     }
   } else {
-    console.error('Failed to parse revenue value. Check the format of the value in the spreadsheet.');
+    console.error('Failed to parse revenue values for YOY Growth. Check formats.');
   }
 }
 
@@ -267,6 +270,6 @@ function displayRevenue(revenue) {
     <div class="number">
       ...
     </div>
-    <div class="label">2024 FY</div>
+    <div class="label">%YOY GROWTH</div>
   </div>
 </body>
